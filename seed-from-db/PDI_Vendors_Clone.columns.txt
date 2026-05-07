@@ -1,0 +1,8 @@
+column_id|name|type_name|max_length|precision|scale|is_nullable
+---------|----|---------|----------|---------|-----|-----------
+1|Vend_Key|int|4|10|0|0
+2|Vend_ID|varchar|50|0|0|1
+3|Vend_Description|varchar|200|0|0|1
+4|Vend_Alt_Description|varchar|200|0|0|1
+5|Sync_Dtm|datetime2|7|23|3|0
+
