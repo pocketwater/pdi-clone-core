@@ -456,6 +456,23 @@ BEGIN
            AND End_DtmUtc IS NULL;
 
         /* =========================
+           STEP: Order Details Fuel
+        ========================= */
+        SET @Step  = N'sp_PDI_Order_Details_Fuel_Clone_SYNC';
+        SET @Start = SYSUTCDATETIME();
+        INSERT dbo.PDI_CloneSync_RunLog (RunGroup_ID, Proc_Name, Step_Name, Start_DtmUtc, Status)
+        VALUES (@RunGroup_ID, @ProcName, @Step, @Start, 'Started');
+        EXEC dbo.sp_PDI_Order_Details_Fuel_Clone_SYNC @Debug = @Debug;
+        SET @End = SYSUTCDATETIME();
+        UPDATE dbo.PDI_CloneSync_RunLog
+           SET End_DtmUtc  = @End,
+               Duration_ms = DATEDIFF(ms, @Start, @End),
+               Status      = 'Success'
+         WHERE RunGroup_ID = @RunGroup_ID
+           AND Step_Name   = @Step
+           AND End_DtmUtc IS NULL;
+
+        /* =========================
            STEP: SI Users
         ========================= */
         SET @Step  = N'sp_PDI_SI_Users_SYNC';
