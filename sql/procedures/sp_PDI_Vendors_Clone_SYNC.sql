@@ -1,4 +1,4 @@
-CREATE   PROCEDURE dbo.sp_PDI_Vendors_Clone_SYNC
+CREATE OR ALTER PROCEDURE dbo.sp_PDI_Vendors_Clone_SYNC
     @Debug bit = 0
 AS
 BEGIN
