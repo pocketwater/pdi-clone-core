@@ -17,6 +17,8 @@ BEGIN
         , User_ID         varchar(50)     NULL
         , Clone_Load_Dtm  datetime2(3)    NOT NULL
         , Clone_Source    varchar(100)    NOT NULL
+        , Sync_Dtm        datetime2(3)    NOT NULL
+            CONSTRAINT DF_PDI_SI_Users_Clone_Sync DEFAULT (SYSUTCDATETIME())
         , CONSTRAINT PK_PDI_SI_Users_Clone
             PRIMARY KEY CLUSTERED (User_Key)
     );

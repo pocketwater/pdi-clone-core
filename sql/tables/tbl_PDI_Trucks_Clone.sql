@@ -23,6 +23,8 @@ BEGIN
         , ts                       rowversion      NULL
         , Clone_Load_Dtm           datetime2(3)    NOT NULL
         , Clone_Source             varchar(128)    NOT NULL
+        , Sync_Dtm                 datetime2(3)    NOT NULL
+            CONSTRAINT DF_PDI_Trucks_Clone_Sync DEFAULT (SYSUTCDATETIME())
         , CONSTRAINT PK_PDI_Trucks_Clone
             PRIMARY KEY CLUSTERED (Vehicle_Key)
     );
