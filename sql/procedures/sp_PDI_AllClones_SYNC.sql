@@ -439,23 +439,6 @@ BEGIN
            AND End_DtmUtc IS NULL;
 
         /* =========================
-           STEP: Orders
-        ========================= */
-        SET @Step  = N'sp_PDI_Orders_SYNC';
-        SET @Start = SYSUTCDATETIME();
-        INSERT dbo.PDI_CloneSync_RunLog (RunGroup_ID, Proc_Name, Step_Name, Start_DtmUtc, Status)
-        VALUES (@RunGroup_ID, @ProcName, @Step, @Start, 'Started');
-        EXEC dbo.sp_PDI_Orders_SYNC @Debug = @Debug;
-        SET @End = SYSUTCDATETIME();
-        UPDATE dbo.PDI_CloneSync_RunLog
-           SET End_DtmUtc  = @End,
-               Duration_ms = DATEDIFF(ms, @Start, @End),
-               Status      = 'Success'
-         WHERE RunGroup_ID = @RunGroup_ID
-           AND Step_Name   = @Step
-           AND End_DtmUtc IS NULL;
-
-        /* =========================
            STEP: Order Details Fuel
         ========================= */
         SET @Step  = N'sp_PDI_Order_Details_Fuel_Clone_SYNC';
@@ -504,25 +487,6 @@ BEGIN
                Duration_ms   = DATEDIFF(ms, @Start, @End),
                Status        = 'Success',
                Rows_Affected = @StepRows
-         WHERE RunGroup_ID = @RunGroup_ID
-           AND Step_Name   = @Step
-           AND End_DtmUtc IS NULL;
-
-        /* =========================
-           STEP: Customers
-        ========================= */
-        SET @Step  = N'sp_PDI_Customers_SYNC';
-        SET @Start = SYSUTCDATETIME();
-        INSERT dbo.PDI_CloneSync_RunLog (RunGroup_ID, Proc_Name, Step_Name, Start_DtmUtc, Status)
-        VALUES (@RunGroup_ID, @ProcName, @Step, @Start, 'Started');
-        DECLARE @StepRows2 int = NULL;
-        EXEC dbo.sp_PDI_Customers_SYNC @Debug = @Debug, @RowsAffected = @StepRows2 OUTPUT;
-        SET @End = SYSUTCDATETIME();
-        UPDATE dbo.PDI_CloneSync_RunLog
-           SET End_DtmUtc    = @End,
-               Duration_ms   = DATEDIFF(ms, @Start, @End),
-               Status        = 'Success',
-               Rows_Affected = @StepRows2
          WHERE RunGroup_ID = @RunGroup_ID
            AND Step_Name   = @Step
            AND End_DtmUtc IS NULL;
