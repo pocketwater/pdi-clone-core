@@ -62,51 +62,6 @@ BEGIN
            AND End_DtmUtc IS NULL;
 
         /* =========================
-           STEP: Terminals
-        ========================= */
-        SET @Step  = N'sp_PDI_Terminals_SYNC';
-        SET @Start = SYSUTCDATETIME();
-
-        IF @Debug = 1
-        BEGIN
-            DECLARE @Utc3 datetime2(7) = SYSUTCDATETIME();
-            SELECT
-                  N'Starting sync: dbo.PDI_Terminals_Clone' AS Msg
-                , @Utc3 AS UtcDtm
-                , CASE WHEN @ReturnLocalTime = 1
-                       THEN CONVERT(datetime2(7), (@Utc3 AT TIME ZONE 'UTC' AT TIME ZONE 'Pacific Standard Time'))
-                       ELSE NULL
-                  END AS PacificDtm;
-        END;
-
-        INSERT dbo.PDI_CloneSync_RunLog (RunGroup_ID, Proc_Name, Step_Name, Start_DtmUtc, Status)
-        VALUES (@RunGroup_ID, @ProcName, @Step, @Start, 'Started');
-
-        EXEC dbo.sp_PDI_Terminals_SYNC @Debug = @Debug;
-
-        IF @Debug = 1
-        BEGIN
-            DECLARE @Utc4 datetime2(7) = SYSUTCDATETIME();
-            SELECT
-                  N'Completed sync: dbo.PDI_Terminals_Clone' AS Msg
-                , @Utc4 AS UtcDtm
-                , CASE WHEN @ReturnLocalTime = 1
-                       THEN CONVERT(datetime2(7), (@Utc4 AT TIME ZONE 'UTC' AT TIME ZONE 'Pacific Standard Time'))
-                       ELSE NULL
-                  END AS PacificDtm;
-        END;
-
-        SET @End = SYSUTCDATETIME();
-
-        UPDATE dbo.PDI_CloneSync_RunLog
-           SET End_DtmUtc  = @End,
-               Duration_ms = DATEDIFF(ms, @Start, @End),
-               Status      = 'Success'
-         WHERE RunGroup_ID = @RunGroup_ID
-           AND Step_Name   = @Step
-           AND End_DtmUtc IS NULL;
-
-        /* =========================
            STEP: Vendors
         ========================= */
         SET @Step  = N'sp_PDI_Vendors_Clone_SYNC';
