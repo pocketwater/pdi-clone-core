@@ -45,6 +45,8 @@ Source of truth: **PDI-SQL-01 / PDICompany_2386_01** (accessed via linked-server
 | `sp_PDI_Fuel_Costs_Clone_SYNC_HealMissing.sql` | `dbo.sp_PDI_Fuel_Costs_Clone_SYNC_HealMissing` | INSERT (NOT EXISTS) | Backfill missing records within 30-day window |
 | `sp_PDI_Fuel_Costs_Clone_SYNC_ReconcileDeletes.sql` | `dbo.sp_PDI_Fuel_Costs_Clone_SYNC_ReconcileDeletes` | DELETE (NOT EXISTS) | Remove orphaned records |
 | `sp_PDI_Fuel_Costs_Clone_SYNC_Upsert.sql` | `dbo.sp_PDI_Fuel_Costs_Clone_SYNC_Upsert` | MERGE (upsert) | Full upsert on all current records |
+| `sp_PDI_Fuel_Contracts_Clone_SYNC.sql` | `dbo.sp_PDI_Fuel_Contracts_Clone_SYNC` | TRUNCATE+INSERT | Fuel contract headers from SQL-01 |
+| `sp_PDI_Fuel_Contract_Details_Clone_SYNC.sql` | `dbo.sp_PDI_Fuel_Contract_Details_Clone_SYNC` | TRUNCATE+INSERT | Fuel contract detail rows from SQL-01 |
 
 ### Legacy SYNC Procs
 | File | Object | Pattern | Notes |
@@ -71,6 +73,8 @@ Discovery is convention-based: `sp_PDI_AllClones_List` scans `sys.tables WHERE n
 | `tbl_PDI_Drivers_Clone.sql` | `PDI_Drivers_Clone` | ~521 | `Sync_Dtm` (D5) | Driver master; batch load pattern |
 | `tbl_PDI_FIVC_Vendor_Clone.sql` | `PDI_FIVC_Vendor_Clone` | ~262 | — | Fuel contract / vendor join |
 | `tbl_PDI_Fuel_Costs_Clone.sql` | `PDI_Fuel_Costs_Clone` | ~7.6M | `Sync_Dtm` | Fuel cost records; batch load pattern; includes D4 SYNC family |
+| `tbl_PDI_Fuel_Contracts_Clone.sql` | `PDI_Fuel_Contracts_Clone` | ~varies | `Sync_Dtm` | Fuel contract header clone |
+| `tbl_PDI_Fuel_Contract_Details_Clone.sql` | `PDI_Fuel_Contract_Details_Clone` | ~varies | `Sync_Dtm` | Fuel contract detail clone |
 | `tbl_PDI_Order_Details_Fuel_Clone.sql` | `PDI_Order_Details_Fuel_Clone` | ~rolling 90d | `Sync_Dtm` | Fuel delivery line items (windowed; 80 cols, `OrdFuel_Key` PK, IX on `OrdFuel_Ord_Key`) |
 | `tbl_PDI_Orders_Clone.sql` | `PDI_Orders_Clone` | ~23K | — | Order header records; batch load pattern |
 | `tbl_PDI_Products_Clone.sql` | `PDI_Products_Clone` | ~195 | — | Product master |

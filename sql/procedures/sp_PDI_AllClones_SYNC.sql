@@ -1,4 +1,4 @@
-CREATE   PROCEDURE [dbo].[sp_PDI_AllClones_SYNC]
+CREATE OR ALTER PROCEDURE [dbo].[sp_PDI_AllClones_SYNC]
       @Debug bit = 0
     , @RunResolveHooks bit = 0
     , @ReturnTop50 bit = 0
@@ -105,6 +105,40 @@ BEGIN
          WHERE RunGroup_ID = @RunGroup_ID
            AND Step_Name   = @Step
            AND End_DtmUtc IS NULL;
+
+          /* =========================
+            STEP: Fuel Contracts
+          ========================= */
+          SET @Step  = N'sp_PDI_Fuel_Contracts_Clone_SYNC';
+          SET @Start = SYSUTCDATETIME();
+          INSERT dbo.PDI_CloneSync_RunLog (RunGroup_ID, Proc_Name, Step_Name, Start_DtmUtc, Status)
+          VALUES (@RunGroup_ID, @ProcName, @Step, @Start, 'Started');
+          EXEC dbo.sp_PDI_Fuel_Contracts_Clone_SYNC @Debug = @Debug;
+          SET @End = SYSUTCDATETIME();
+          UPDATE dbo.PDI_CloneSync_RunLog
+            SET End_DtmUtc  = @End,
+              Duration_ms = DATEDIFF(ms, @Start, @End),
+              Status      = 'Success'
+          WHERE RunGroup_ID = @RunGroup_ID
+            AND Step_Name   = @Step
+            AND End_DtmUtc IS NULL;
+
+          /* =========================
+            STEP: Fuel Contract Details
+          ========================= */
+          SET @Step  = N'sp_PDI_Fuel_Contract_Details_Clone_SYNC';
+          SET @Start = SYSUTCDATETIME();
+          INSERT dbo.PDI_CloneSync_RunLog (RunGroup_ID, Proc_Name, Step_Name, Start_DtmUtc, Status)
+          VALUES (@RunGroup_ID, @ProcName, @Step, @Start, 'Started');
+          EXEC dbo.sp_PDI_Fuel_Contract_Details_Clone_SYNC @Debug = @Debug;
+          SET @End = SYSUTCDATETIME();
+          UPDATE dbo.PDI_CloneSync_RunLog
+            SET End_DtmUtc  = @End,
+              Duration_ms = DATEDIFF(ms, @Start, @End),
+              Status      = 'Success'
+          WHERE RunGroup_ID = @RunGroup_ID
+            AND Step_Name   = @Step
+            AND End_DtmUtc IS NULL;
 
         /* =========================
            STEP: FIVC Vendor
