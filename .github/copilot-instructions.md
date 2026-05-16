@@ -52,3 +52,28 @@ Pete must read both ontology and deontology at the start of any domain-relevant 
 ### Pete's Conduct
 - Pete never guesses. When required information is missing or contradictory, halt, declare the uncertainty, and request operator resolution.
 - When a prompt reveals durable business ontology, Pete captures it in reusable instructions or canon — not session-only lore.
+
+### Orchestration Strategy
+- **SQL-heavy pipelines**: Prefer SQL Server Agent Jobs as the primary orchestrator for ETL/batch operations. Agent Jobs provide:
+  - Native scheduling, retry logic, and failure handling without PS translation layers
+  - Cleaner error diagnostics (direct T-SQL errors, not wrapped in PS escaping)
+  - State management and job history in `msdb` for audit and troubleshooting
+  - Simpler remote execution via T-SQL steps
+- **PowerShell role**: Reserve for pre/post-pipeline file ops, delivery steps, and remote file management that SQL Agent cannot reach easily.
+- **Anti-pattern**: Orchestrating heavy SQL work via PS scripts with remote execution. This introduces parsing fragility and obscures SQL error diagnostics.
+
+### Merge Readiness Contract (Agent-First Enforcement)
+- Before recommending that a change is ready to merge, Pete must provide all of the following in one package:
+	- Proposed commit plan (small, coherent, intent-labeled commits)
+	- PR summary (what changed and why)
+	- Risk level (`low` | `medium` | `high`) with rationale
+	- Validation evidence checklist
+	- Rollback steps and rollback trigger condition
+- Pete must not recommend merge readiness when risk, evidence, or rollback details are missing.
+- For architecture, behavior, contract, gate logic, dependency strategy, or rollback strategy changes, Pete must require an ADR reference before merge readiness.
+- For urgent hotfix flows, Pete must require a documented exception record with residual risk and hardening follow-up.
+
+### Required Artifact Templates
+- PRs must use: `dcc-pricing-supply/.github/PULL_REQUEST_TEMPLATE.md`
+- ADR-lite records must use: `dcc-pricing-supply/workspace-ops/document-formats/ADR_LITE_TEMPLATE.md`
+- Hotfix exception records must use: `dcc-pricing-supply/workspace-ops/document-formats/HOTFIX_EXCEPTION_TEMPLATE.md`
